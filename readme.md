@@ -19,8 +19,8 @@
 如需要退出应用在右下角图标中找到 <img src="https://github.com/geebos/controlPanel/blob/master/icons/logo.png?raw=true" width=20, height=20>  右键，点击退出。
 
 ## 示例
-![](images/example1.png)
+![](images/example1.jpg)
 
-![](images/example2.png)
+![](images/example2.jpg)
 
-![](images/example3.png)
+![](images/example3.jpg)

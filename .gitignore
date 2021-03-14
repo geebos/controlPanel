@@ -2,8 +2,10 @@ build/
 dist/
 test/
 .idea/
+__pycache__/
 config.json
 test*.*
-*.bmp
+temp*.*
 *.spec
 *.zip
+*.exe

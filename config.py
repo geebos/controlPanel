@@ -11,6 +11,7 @@ default_config = {
 class Config(dict):
     def __init__(self, path='config.json'):
         super(Config, self).__init__()
+        self.path = path
         if os.path.isfile(path):
             with open(path, 'r', encoding='utf-8') as f:
                 data = json.load(f)
@@ -18,7 +19,6 @@ class Config(dict):
         else:
             self.update(default_config)
             self.flush()
-        self.path = path
 
     def __setitem__(self, key, value):
         super(Config, self).__setitem__(key, value)

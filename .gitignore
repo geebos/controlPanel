@@ -1,8 +1,9 @@
 build/
 dist/
+test/
 .idea/
 config.json
-test.*
+test*.*
 *.bmp
 *.spec
 *.zip

@@ -4,7 +4,7 @@
 在任务栏隐藏并且当前应用是全屏时需要启动其他应用。
 
 ## 如何使用
-[点击下载](https://github.com/geebos/controlPanel/releases/download/1.0.0/controlPanel.zip)
+[点击下载](https://github.com/geebos/controlPanel/releases)
 
 解压之后进入解压后的文件夹，点击 controlPanel.exe 启动应用程序。
 

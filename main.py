@@ -1,13 +1,15 @@
-from PyQt5.Qt import *
-from extract_icon import get_icon_from_exe
-from config import Config, FilesPath, StringsList, default_log_path, default_path
-import actions
-import system_hotkey
-import win32com.client
-import win32api
+import os
 import sys
-import subprocess
 import traceback
+
+import system_hotkey
+import win32api
+import win32com.client
+from PyQt5.Qt import *
+
+import actions
+from config import Config, FilesPath, StringsList, default_log_path
+from extract_icon import get_icon_from_exe
 
 
 class Item(QLabel):
@@ -31,7 +33,7 @@ class Item(QLabel):
         self.setStyleSheet('Item{background-color: white; border-radius: 4px;}')
 
     def mouseDoubleClickEvent(self, a0: QMouseEvent) -> None:
-        subprocess.Popen(self.target)
+        win32api.ShellExecute(0, 'open', self.target, '', os.path.dirname(self.target), 1)
         self.double_clicked.emit()
 
     def enterEvent(self, a0: QEvent) -> None:
@@ -141,7 +143,7 @@ class MainWindow(QMainWindow):
             self.hide()
 
     def closeEvent(self, a0: QCloseEvent) -> None:
-        self.hot_key_manager.unregister(self.config['shortcut'])
+        self.hot_key_manager.unregister(self.config.shortcut)
         self.tray_icon.setVisible(False)
         app.exit(0)
 

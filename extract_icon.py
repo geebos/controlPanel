@@ -3,6 +3,8 @@ import win32gui
 import win32con
 import win32api
 from PyQt5.Qt import QImage
+from config import default_path
+import os
 
 
 def get_icon_from_exe(path):
@@ -26,5 +28,6 @@ def get_icon_from_exe(path):
     win32gui.DestroyIcon(large[0])
 
     # convert picture
-    hbmp.SaveBitmapFile(hdc, 'temp.bmp')
-    return QImage('temp.bmp')
+    path = os.path.join(default_path, 'temp.bmp')
+    hbmp.SaveBitmapFile(hdc, path)
+    return QImage(path)

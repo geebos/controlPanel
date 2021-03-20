@@ -1,6 +1,6 @@
 from PyQt5.Qt import *
 from extract_icon import get_icon_from_exe
-from config import Config, FilesPath, StringsList
+from config import Config, FilesPath, StringsList, default_log_path, default_path
 import actions
 import system_hotkey
 import win32com.client
@@ -205,5 +205,5 @@ if __name__ == '__main__':
         main = MainWindow(sys.argv[0])
         app.exec_()
     except:
-        with open('log.log', 'a', encoding='utf-8') as f:
+        with open(default_log_path, 'a', encoding='utf-8') as f:
             f.write(traceback.format_exc()+'\n\n')

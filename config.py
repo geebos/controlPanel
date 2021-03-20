@@ -35,7 +35,11 @@ default_config = {
     _shortcut: ["control", "q"],
     _auto_start: False
 }
-default_config_path = os.path.join(os.path.expanduser('~'), '.control-panel-config.json')
+default_path = os.path.join(os.path.expanduser('~'), '.control-panel')
+if not os.path.isdir(default_path):
+    os.mkdir(default_path)
+default_config_path = os.path.join(default_path, 'config.json')
+default_log_path = os.path.join(default_path, 'log.log')
 
 
 class Config(dict):

@@ -58,7 +58,7 @@ class Container(QWidget):
         shadow_effect = QGraphicsDropShadowEffect(self)
         shadow_effect.setOffset(0, 0)
         shadow_effect.setColor(Qt.gray)
-        shadow_effect.setBlurRadius(10)
+        shadow_effect.setBlurRadius(20)
         self.setGraphicsEffect(shadow_effect)
 
     def set_items(self, lnk_paths):

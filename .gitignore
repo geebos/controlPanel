@@ -9,3 +9,4 @@ temp*.*
 *.spec
 *.zip
 *.exe
+*.log

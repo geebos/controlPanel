@@ -1,7 +1,8 @@
 from PyQt5.Qt import *
-from system_hotkey import SystemHotkey
 from extract_icon import get_icon_from_exe
-from config import Config
+from config import Config, FilesPath, StringsList
+import actions
+import system_hotkey
 import win32com.client
 import win32api
 import sys
@@ -99,11 +100,12 @@ class Container(QWidget):
 class MainWindow(QMainWindow):
     hot_key_emit = pyqtSignal()
 
-    def __init__(self):
+    def __init__(self, executable_path):
         super(MainWindow, self).__init__()
 
         self.desktop = QApplication.desktop()
         self.config = Config()
+        self.executable_path = executable_path
 
         self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint | Qt.Tool)
         self.setAttribute(Qt.WA_TranslucentBackground, True)
@@ -117,16 +119,17 @@ class MainWindow(QMainWindow):
         self.center_widget.setObjectName('center_widget')
         self.center_widget.setAttribute(Qt.WA_StyledBackground, True)
         self.center_widget.setStyleSheet('QWidget#center_widget{background-color: rgba(255, 255, 255, 1); border-radius:8px}')
-        self.center_widget.set_items(self.config['lnkFiles'])
+        self.center_widget.set_items(self.config.lnk_files)
 
-        self.hot_key_manager = SystemHotkey()
-        self.hot_key_manager.register(self.config['shortcut'], callback=lambda x: self.hot_key_emit.emit())
+        self.hot_key_manager = system_hotkey.SystemHotkey()
+        self.hot_key_manager.register(self.config.shortcut, callback=lambda x: self.hot_key_emit.emit())
         self.hot_key_emit.connect(self.hot_key_emit_event)
 
         tray_icon = QSystemTrayIcon(parent=self)
-        tray_icon.setIcon(QIcon('icons/logo.png'))
+        tray_icon.setIcon(QIcon(FilesPath.image_logo))
         tp_menu = QMenu()
-        tp_menu.addAction(QAction(QIcon('icons/exit.png'), '退出', parent=self, triggered=self.close))
+        tp_menu.addAction(actions.AutoStartAction(self, self.config))
+        tp_menu.addAction(actions.ExitAction(self, self.close))
         tray_icon.setContextMenu(tp_menu)
         tray_icon.show()
         self.tray_icon = tray_icon
@@ -140,7 +143,7 @@ class MainWindow(QMainWindow):
     def closeEvent(self, a0: QCloseEvent) -> None:
         self.hot_key_manager.unregister(self.config['shortcut'])
         self.tray_icon.setVisible(False)
-        sys.exit(0)
+        app.exit(0)
 
     def show(self) -> None:
         x, y = win32api.GetCursorPos()
@@ -161,32 +164,32 @@ class MainWindow(QMainWindow):
         )
         super(MainWindow, self).show()
 
-    def add_lnk(self, *args):
-        filename, _ = QFileDialog.getOpenFileName(self, '选择快捷方式', '', '快捷方式(*.lnk)')
+    def add_lnk(self):
+        filename, _ = QFileDialog.getOpenFileName(self, StringsList.select_lnk, '', '%s(*.lnk)' % StringsList.lnk)
         self.activateWindow()
         if filename == '':
             return
 
-        if self.config.is_lnk_exists(filename):
-            QMessageBox.information(self, '提示', '快捷方式已存在')
+        if filename in self.config.lnk_files:
+            QMessageBox.information(self, StringsList.hint, StringsList.lnk_already_exist)
             return
-        self.config['lnkFiles'].append(filename)
+        self.config.lnk_files.append(filename)
         self.center_widget.add_item(filename)
         self.config.flush()
 
     def show_context_menu(self, point: QPoint):
         point = self.geometry().topLeft()+point
         menu = QMenu()
-        menu.addAction(QAction(QIcon('icons/add.png'), '添加', parent=self, triggered=self.add_lnk))
+        menu.addAction(actions.AddLnkAction(self, self.add_lnk))
 
         item = QApplication.widgetAt(point)
         if type(item) is Item:
-            menu.addAction(QAction(QIcon('icons/delete.png'), '删除', parent=self, triggered=lambda x: self.delete_item(item)))
+            menu.addAction(actions.DeleteLnkAction(self, lambda x: self.delete_item(item)))
         menu.exec_(point)
 
     def delete_item(self, item: Item):
         self.center_widget.remove_item(item)
-        self.config.remove_lnk(item.lnk_path)
+        self.config.lnk_files.remove(item.lnk_path)
         self.config.flush()
 
 
@@ -196,21 +199,11 @@ def get_target_path(lnk_path):
     return shortcut.Targetpath
 
 
-# def add_right_menu_item():
-#     # 添加 lnk文件右键菜单选项
-#     reg_path = r'SOFTWARE\Classes\lnkfile\controlPanel'
-#     key = winreg.CreateKeyEx(winreg.HKEY_CURRENT_USER, reg_path, access=winreg.KEY_SET_VALUE)
-#     command = winreg.CreateKeyEx(key, 'command', access=winreg.KEY_SET_VALUE)
-#     winreg.SetValue(winreg.HKEY_CURRENT_USER, reg_path, winreg.REG_SZ, '添加到控制台')
-#     winreg.SetValueEx(key, 'Icon', 0, winreg.REG_EXPAND_SZ, os.path.abspath('logo.png'))
-#     winreg.SetValueEx(command, )
-
-
 if __name__ == '__main__':
     try:
         app = QApplication(sys.argv)
-        main = MainWindow()
-        sys.exit(app.exec_())
+        main = MainWindow(sys.argv[0])
+        app.exec_()
     except:
         with open('log.log', 'a', encoding='utf-8') as f:
             f.write(traceback.format_exc()+'\n\n')

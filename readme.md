@@ -1,8 +1,8 @@
 # controlPanel
 
-<img src="https://img.shields.io/badge/platform-win7%7Cwin10-lightgrey.svg">
-<img src="https://img.shields.io/badge/language-python-blue.svg">
-<img src="https://img.shields.io/github/license/geebos/controlPanel">
+![](https://img.shields.io/badge/platform-win7%7Cwin10-lightgrey.svg)
+![](https://img.shields.io/badge/language-python-blue.svg)
+![](https://img.shields.io/github/license/geebos/controlPanel)
 
 ## 适用场景
 在任务栏隐藏并且当前应用是全屏时需要启动其他应用。

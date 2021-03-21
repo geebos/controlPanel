@@ -203,6 +203,7 @@ def get_target_path(lnk_path):
 
 if __name__ == '__main__':
     try:
+        os.chdir(os.path.dirname(sys.argv[0]))
         app = QApplication(sys.argv)
         main = MainWindow(sys.argv[0])
         app.exec_()
